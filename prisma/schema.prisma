@@ -12,12 +12,10 @@ model User {
   email             String?  @unique
   passwordHash      String?
   name              String?
-  image             String?
   role              String   @default("learner")
   isGuest           Boolean  @default(false)
   onboardingDone    Boolean  @default(false)
   tamilLevel        String?
-  scriptVisibility  String   @default("smaller")
   xp                Int      @default(0)
   level             Int      @default(1)
   currentStreak     Int      @default(0)
@@ -30,8 +28,6 @@ model User {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  accounts            Account[]
-  sessions            Session[]
   lessonProgress      UserLessonProgress[]
   conceptMastery      UserConceptMastery[]
   vocabularyMastery   UserVocabularyMastery[]
@@ -41,40 +37,6 @@ model User {
   analyticsEvents     AnalyticsEvent[]
   passwordResetTokens PasswordResetToken[]
   contentReviews      ContentReview[]
-}
-
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
 }
 
 model PasswordResetToken {
@@ -186,7 +148,6 @@ model VocabularyItem {
   concept          Concept                 @relation(fields: [conceptId], references: [id], onDelete: Cascade)
   audioAsset       AudioAsset?             @relation(fields: [audioAssetId], references: [id])
   mastery          UserVocabularyMastery[]
-  dialectVariants  DialectVariant[]
   exampleLinks     VocabularyExample[]
 }
 
@@ -209,7 +170,6 @@ model Sentence {
   updatedAt       DateTime            @updatedAt
   concept         Concept?            @relation(fields: [conceptId], references: [id], onDelete: SetNull)
   audioAsset      AudioAsset?         @relation(fields: [audioAssetId], references: [id])
-  dialectVariants DialectVariant[]
   vocabExamples   VocabularyExample[]
 }
 
@@ -254,18 +214,6 @@ model DialogueLine {
   audioAsset     AudioAsset? @relation(fields: [audioAssetId], references: [id])
 }
 
-model DialectVariant {
-  id             String          @id @default(cuid())
-  dialect        String
-  romanizedTamil String
-  tamilScript    String?
-  notes          String?
-  vocabularyId   String?
-  sentenceId     String?
-  vocabulary     VocabularyItem? @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
-  sentence       Sentence?       @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-}
-
 model Exercise {
   id              String            @id @default(cuid())
   lessonId        String
@@ -281,7 +229,6 @@ model Exercise {
   tokens          String?
   options         String?
   pairs           String?
-  lines           String?
   explanation     String?
   hint            String?
   literalMeaning  String?
@@ -361,7 +308,6 @@ model UserConceptMastery {
   nextReviewAt   DateTime?
   easeFactor     Float     @default(2.5)
   intervalDays   Float     @default(0)
-  confusedWith   String?
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   concept        Concept   @relation(fields: [conceptId], references: [id], onDelete: Cascade)
 

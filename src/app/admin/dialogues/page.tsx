@@ -18,6 +18,7 @@ export default async function AdminDialoguesPage() {
         ← Admin
       </Link>
       <h1 className="mt-4 font-display text-2xl font-semibold">Dialogues</h1>
+      <p className="mt-1 text-sm text-ink-muted">Read-only browse of seeded dialogues.</p>
       <div className="mt-6 space-y-6">
         {dialogues.map((d) => (
           <article key={d.id} className="rounded-2xl border border-border bg-white p-4">

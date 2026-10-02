@@ -227,6 +227,11 @@ export async function completeLesson(data: {
   const lesson = await prisma.lesson.findUnique({ where: { id: data.lessonId } });
   if (!lesson) return { error: "Lesson not found" };
 
+  const prior = await prisma.userLessonProgress.findUnique({
+    where: { userId_lessonId: { userId: session.user.id, lessonId: data.lessonId } },
+  });
+  const firstCompletion = prior?.status !== "completed";
+
   const accuracy = data.totalCount ? data.correctCount / data.totalCount : 1;
   const perfect = accuracy >= 0.999;
   const xp = Math.round(lesson.xpReward * (0.6 + 0.4 * accuracy));
@@ -257,16 +262,18 @@ export async function completeLesson(data: {
   await awardXp(session.user.id, xp);
   await unlockNextLesson(session.user.id, data.lessonId);
 
-  const concepts = await prisma.lessonConcept.findMany({
-    where: { lessonId: data.lessonId },
-    include: { concept: true },
-  });
-  const vocabKeys = concepts.filter((c) => c.concept.kind === "vocabulary").length;
-  if (vocabKeys) {
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { wordsLearned: { increment: vocabKeys } },
+  if (firstCompletion) {
+    const concepts = await prisma.lessonConcept.findMany({
+      where: { lessonId: data.lessonId },
+      include: { concept: true },
     });
+    const vocabKeys = concepts.filter((c) => c.concept.kind === "vocabulary").length;
+    if (vocabKeys) {
+      await prisma.user.update({
+        where: { id: session.user.id },
+        data: { wordsLearned: { increment: vocabKeys } },
+      });
+    }
   }
 
   const achievements = await checkAchievements(session.user.id);

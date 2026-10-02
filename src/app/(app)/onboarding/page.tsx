@@ -80,11 +80,7 @@ export default function OnboardingPage() {
         onClick={() =>
           start(async () => {
             await completeOnboarding({ tamilLevel: level, name: name || undefined });
-            if (level === "understand_some" || level === "understand_conversations") {
-              router.push("/placement");
-            } else {
-              router.push("/dashboard");
-            }
+            router.push("/dashboard");
           })
         }
       >

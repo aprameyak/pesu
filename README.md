@@ -28,7 +28,9 @@ SARVAM_TTS_SPEAKER=kavitha
 SARVAM_TTS_LANGUAGE=ta-IN
 ```
 
-No key: lessons work; generate audio later from Admin. Password reset has no email sender; dev returns a token in the UI.
+No key: lessons work; generate audio later from Admin. Password reset has no email sender; in development the UI shows a local reset link.
+
+Onboarding sets `tamilLevel` and may skip early Survival lessons for heritage speakers.
 
 ## License
 

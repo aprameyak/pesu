@@ -97,6 +97,63 @@ export async function recordConceptAttempt(params: {
     },
   });
 
+  if (concept.kind === "vocabulary") {
+    const vocab = await prisma.vocabularyItem.findUnique({
+      where: { conceptId: concept.id },
+    });
+    if (vocab) {
+      const existingVocab = await prisma.userVocabularyMastery.findUnique({
+        where: {
+          userId_vocabularyId: { userId: params.userId, vocabularyId: vocab.id },
+        },
+      });
+      const vBase = {
+        recognize: existingVocab?.recognize ?? 0,
+        meaning: existingVocab?.meaning ?? 0,
+        production: existingVocab?.production ?? 0,
+        listening: existingVocab?.listening ?? 0,
+      };
+      if (
+        params.dimension === "recognize" ||
+        params.dimension === "meaning" ||
+        params.dimension === "production" ||
+        params.dimension === "listening"
+      ) {
+        vBase[params.dimension] = clamp01(vBase[params.dimension] + delta);
+      }
+      const vOverall =
+        vBase.recognize * 0.25 +
+        vBase.meaning * 0.3 +
+        vBase.production * 0.25 +
+        vBase.listening * 0.2;
+      await prisma.userVocabularyMastery.upsert({
+        where: {
+          userId_vocabularyId: { userId: params.userId, vocabularyId: vocab.id },
+        },
+        create: {
+          userId: params.userId,
+          vocabularyId: vocab.id,
+          ...vBase,
+          overall: vOverall,
+          exposures: 1,
+          correctCount: params.correct ? 1 : 0,
+          incorrectCount: params.correct ? 0 : 1,
+          lastSeenAt: new Date(),
+          nextReviewAt,
+        },
+        update: {
+          ...vBase,
+          overall: vOverall,
+          exposures: { increment: 1 },
+          correctCount: params.correct ? { increment: 1 } : undefined,
+          incorrectCount: params.correct ? undefined : { increment: 1 },
+          lastSeenAt: new Date(),
+          nextReviewAt,
+        },
+      });
+    }
+  }
+
   if (!params.correct || overall < 0.7) {
     await prisma.reviewQueueItem.upsert({
       where: { userId_conceptId: { userId: params.userId, conceptId: concept.id } },
@@ -216,8 +273,10 @@ export async function checkAchievements(userId: string) {
     if (ach.key === "first_sentence" && user.lessonProgress.length >= 1) ok = true;
     if (ach.key === "first_conversation" && user.lessonProgress.some((p) => p.perfect || p.accuracy))
       ok = user.lessonProgress.length >= 3;
-    if (ach.key === "words_50" && user.vocabularyMastery.length >= 50) ok = true;
-    if (ach.key === "words_100" && user.vocabularyMastery.length >= 100) ok = true;
+    if (ach.key === "words_50" && (user.vocabularyMastery.length >= 50 || user.wordsLearned >= 50))
+      ok = true;
+    if (ach.key === "words_100" && (user.vocabularyMastery.length >= 100 || user.wordsLearned >= 100))
+      ok = true;
     if (ach.key === "perfect_lesson" && user.lessonProgress.some((p) => p.perfect)) ok = true;
     if (ach.key === "streak_7" && user.currentStreak >= 7) ok = true;
     if (ach.key === "streak_30" && user.currentStreak >= 30) ok = true;

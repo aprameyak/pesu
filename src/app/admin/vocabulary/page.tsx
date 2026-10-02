@@ -18,6 +18,7 @@ export default async function AdminVocabularyPage() {
         ← Admin
       </Link>
       <h1 className="mt-4 font-display text-2xl font-semibold">Vocabulary</h1>
+      <p className="mt-1 text-sm text-ink-muted">Read-only browse of seeded words.</p>
       <ul className="mt-6 space-y-3">
         {words.map((w) => (
           <li key={w.id} className="rounded-2xl border border-border bg-white p-4">

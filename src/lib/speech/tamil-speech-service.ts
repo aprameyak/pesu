@@ -240,7 +240,6 @@ export class TamilSpeechService {
     if (!asset) throw new Error("Audio asset not found");
 
     if (asset.status === "ready" && asset.publicUrl && !forceRegenerate) {
-
       if (asset.filePath) {
         try {
           await access(asset.filePath);
@@ -251,7 +250,7 @@ export class TamilSpeechService {
             status: "ready",
           };
         } catch {
-
+          // File missing on disk — regenerate below.
         }
       }
     }
@@ -263,10 +262,6 @@ export class TamilSpeechService {
       languageCode: asset.languageCode,
       forceRegenerate: true,
     });
-  }
-
-  async ensurePhraseAudio(tamilScript: string) {
-    return this.getAudioForText({ text: tamilScript });
   }
 }
 

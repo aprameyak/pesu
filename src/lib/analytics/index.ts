@@ -2,7 +2,6 @@ import { prisma } from "@/lib/db";
 
 export type AnalyticsEventName =
   | "onboarding_completed"
-  | "placement_completed"
   | "lesson_started"
   | "lesson_completed"
   | "exercise_answered"
@@ -29,7 +28,9 @@ export async function trackEvent(
         payload: payload ? JSON.stringify(payload) : null,
       },
     });
-  } catch {
-
+  } catch (err) {
+    if (process.env.NODE_ENV === "development") {
+      console.error("[analytics]", event, err);
+    }
   }
 }

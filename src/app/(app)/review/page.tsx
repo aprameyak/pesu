@@ -24,14 +24,15 @@ export default async function ReviewPage() {
     reason: d.reason,
   }));
 
-  let fallback = items;
-  if (!fallback.length) {
+  const usingQueue = items.length > 0;
+  let reviewItems = items;
+  if (!usingQueue) {
     const vocab = await prisma.vocabularyItem.findMany({
       where: { status: "published" },
       take: 6,
       orderBy: { createdAt: "asc" },
     });
-    fallback = vocab.map((v) => ({
+    reviewItems = vocab.map((v) => ({
       conceptKey: `vocab-fallback:${v.id}`,
       title: v.romanized,
       romanized: v.romanized,
@@ -44,11 +45,13 @@ export default async function ReviewPage() {
 
   return (
     <main className="px-5 pt-8">
-      <h1 className="font-display text-2xl font-semibold">Review weak skills</h1>
+      <h1 className="font-display text-2xl font-semibold">Review</h1>
       <p className="mt-1 text-sm text-ink-muted">
-        Personalized from mistakes, low mastery, and spaced recall.
+        {usingQueue
+          ? "From mistakes, low mastery, and spaced recall."
+          : "No weak skills due — warm up with core vocabulary."}
       </p>
-      <ReviewClient items={fallback} />
+      <ReviewClient items={reviewItems} />
     </main>
   );
 }

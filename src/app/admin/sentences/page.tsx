@@ -15,6 +15,7 @@ export default async function AdminSentencesPage() {
         ← Admin
       </Link>
       <h1 className="mt-4 font-display text-2xl font-semibold">Sentences</h1>
+      <p className="mt-1 text-sm text-ink-muted">Read-only browse of seeded sentences.</p>
       <ul className="mt-6 space-y-3">
         {sentences.map((s) => (
           <li key={s.id} className="rounded-2xl border border-border bg-white p-4">
