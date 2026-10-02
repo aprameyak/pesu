@@ -92,7 +92,7 @@ export default async function AdminPage() {
                 </li>
               ))}
               {unit.lessons.length === 0 && (
-                <li className="text-xs text-ink-faint">No lessons yet (placeholder unit)</li>
+                <li className="text-xs text-ink-faint">No lessons in this unit</li>
               )}
             </ul>
           </div>

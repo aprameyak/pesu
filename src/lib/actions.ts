@@ -291,7 +291,9 @@ export async function requestPasswordReset(email: string) {
     },
   });
 
-  console.log(`[password-reset] ${email}: /forgot-password?token=${token}`);
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[password-reset] ${email}: /forgot-password?token=${token}`);
+  }
   return { ok: true, devToken: process.env.NODE_ENV === "development" ? token : undefined };
 }
 

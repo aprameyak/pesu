@@ -13,13 +13,12 @@ Hierarchy in every lesson:
 
 - Next.js (App Router) + TypeScript + Tailwind CSS
 - Prisma + SQLite locally (swap `DATABASE_URL` for PostgreSQL in production)
-- NextAuth (credentials + guest; OAuth-ready Account model)
+- NextAuth (credentials + guest)
 - Sarvam TTS behind `TamilSpeechService` (API key never shipped to the browser)
 
 ## Quick start
 
 ```bash
-cd pesu
 cp .env.example .env
 npm install
 npm run db:push
@@ -29,12 +28,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Demo accounts
+### Local seed accounts
 
 | Role   | Email           | Password        |
 |--------|-----------------|-----------------|
 | Admin  | admin@pesu.app  | pesu-admin-123  |
 | Learner| demo@pesu.app   | demo1234        |
+
+Seed credentials only — not for production.
 
 ### Sarvam audio
 
@@ -51,11 +52,13 @@ Without a key, lessons still work; audio buttons stay pending until you generate
 
 Audio is generated once from **Tamil script**, stored under `storage/audio` + `public/audio/cache`, and reused. Learners can play **Slow / Normal** via browser `playbackRate` (no duplicate TTS files).
 
+Password reset does not send email yet; in development a reset token is returned to the client for local testing.
+
 ## What’s in the MVP
 
 - Auth: signup, login, logout, guest, password reset tokens
 - Onboarding + heritage placement
-- Course path with Unit 1 **Survival Tamil** (5 polished lessons, many exercise types)
+- Course path with Unit 1 **Survival Tamil** (5 lessons, many exercise types)
 - Phrase UI: Romanized → English → script → speaker
 - Centralized romanization/normalization layer
 - Multi-dimension mastery + review queue
@@ -63,8 +66,6 @@ Audio is generated once from **Tamil script**, stored under `storage/audio` + `p
 - Admin curriculum overview, publish / needs-review, audio generate/regenerate
 - Analytics event hooks
 
-Units 2–10 are scaffolded as path placeholders for content expansion.
+## License
 
-## Product rule
-
-Never turn this into “learn to read Tamil.” Script is passive exposure. Success looks like answering **Saaptiya?** with **Innum illa.**
+MIT

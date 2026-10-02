@@ -45,7 +45,7 @@ function ForgotInner() {
           const res = await requestPasswordReset(email);
           setMessage(
             res.devToken
-              ? `Dev reset link token: ${res.devToken}`
+              ? `Local reset link: /reset-password?token=${res.devToken}`
               : "If that email exists, a reset link was created."
           );
         });

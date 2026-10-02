@@ -2,6 +2,8 @@
   "name": "pesu",
   "version": "0.1.0",
   "private": true,
+  "description": "Speak conversational Tamil — Romanized first",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
