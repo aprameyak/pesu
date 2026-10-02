@@ -225,11 +225,7 @@ export async function unlockNextLesson(userId: string, completedLessonId: string
   const idx = siblings.findIndex((l) => l.id === completedLessonId);
   const next = siblings[idx + 1];
   if (next) {
-    await prisma.userLessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId: next.id } },
-      create: { userId, lessonId: next.id, status: "available" },
-      update: { status: "available" },
-    });
+    await ensureLessonAvailable(userId, next.id);
     return;
   }
 
@@ -244,12 +240,21 @@ export async function unlockNextLesson(userId: string, completedLessonId: string
   });
   const first = nextUnit?.lessons[0];
   if (first) {
-    await prisma.userLessonProgress.upsert({
-      where: { userId_lessonId: { userId, lessonId: first.id } },
-      create: { userId, lessonId: first.id, status: "available" },
-      update: { status: "available" },
-    });
+    await ensureLessonAvailable(userId, first.id);
   }
+}
+
+async function ensureLessonAvailable(userId: string, lessonId: string) {
+  const existing = await prisma.userLessonProgress.findUnique({
+    where: { userId_lessonId: { userId, lessonId } },
+  });
+  if (existing && existing.status !== "locked") return;
+
+  await prisma.userLessonProgress.upsert({
+    where: { userId_lessonId: { userId, lessonId } },
+    create: { userId, lessonId, status: "available" },
+    update: { status: "available" },
+  });
 }
 
 export async function checkAchievements(userId: string) {
@@ -271,8 +276,7 @@ export async function checkAchievements(userId: string) {
     if (earned.has(ach.id)) continue;
     let ok = false;
     if (ach.key === "first_sentence" && user.lessonProgress.length >= 1) ok = true;
-    if (ach.key === "first_conversation" && user.lessonProgress.some((p) => p.perfect || p.accuracy))
-      ok = user.lessonProgress.length >= 3;
+    if (ach.key === "first_conversation" && user.lessonProgress.length >= 3) ok = true;
     if (ach.key === "words_50" && (user.vocabularyMastery.length >= 50 || user.wordsLearned >= 50))
       ok = true;
     if (ach.key === "words_100" && (user.vocabularyMastery.length >= 100 || user.wordsLearned >= 100))

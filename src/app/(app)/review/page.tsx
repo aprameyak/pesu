@@ -29,11 +29,12 @@ export default async function ReviewPage() {
   if (!usingQueue) {
     const vocab = await prisma.vocabularyItem.findMany({
       where: { status: "published" },
+      include: { concept: true },
       take: 6,
       orderBy: { createdAt: "asc" },
     });
     reviewItems = vocab.map((v) => ({
-      conceptKey: `vocab-fallback:${v.id}`,
+      conceptKey: v.concept.key,
       title: v.romanized,
       romanized: v.romanized,
       tamilScript: v.tamilScript,

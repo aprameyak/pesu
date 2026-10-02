@@ -253,13 +253,15 @@ export async function completeLesson(data: {
       status: "completed",
       score: accuracy,
       accuracy,
-      xpEarned: xp,
+      xpEarned: firstCompletion ? xp : Math.max(prior?.xpEarned ?? 0, xp),
       completedAt: new Date(),
-      perfect,
+      perfect: perfect || Boolean(prior?.perfect),
     },
   });
 
-  await awardXp(session.user.id, xp);
+  if (firstCompletion) {
+    await awardXp(session.user.id, xp);
+  }
   await unlockNextLesson(session.user.id, data.lessonId);
 
   if (firstCompletion) {
@@ -280,10 +282,34 @@ export async function completeLesson(data: {
   await trackEvent("lesson_completed", session.user.id, {
     lessonId: data.lessonId,
     accuracy,
-    xp,
+    xp: firstCompletion ? xp : 0,
+    redo: !firstCompletion,
   });
 
-  return { ok: true, xp, accuracy, perfect, achievements };
+  return { ok: true, xp: firstCompletion ? xp : 0, accuracy, perfect, achievements };
+}
+
+export async function submitReviewAnswer(data: {
+  conceptKey: string;
+  remembered: boolean;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Not signed in" };
+  if (!data.conceptKey) return { error: "Missing concept" };
+
+  await recordConceptAttempt({
+    userId: session.user.id,
+    conceptKey: data.conceptKey,
+    correct: data.remembered,
+    dimension: "meaning",
+  });
+
+  await trackEvent("review_completed", session.user.id, {
+    conceptKey: data.conceptKey,
+    remembered: data.remembered,
+  });
+
+  return { ok: true };
 }
 
 export async function requestPasswordReset(email: string) {

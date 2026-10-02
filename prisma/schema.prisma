@@ -148,11 +148,10 @@ model VocabularyItem {
   concept          Concept                 @relation(fields: [conceptId], references: [id], onDelete: Cascade)
   audioAsset       AudioAsset?             @relation(fields: [audioAssetId], references: [id])
   mastery          UserVocabularyMastery[]
-  exampleLinks     VocabularyExample[]
 }
 
 model Sentence {
-  id              String              @id @default(cuid())
+  id              String      @id @default(cuid())
   conceptId       String?
   romanizedTamil  String
   tamilScript     String
@@ -160,27 +159,16 @@ model Sentence {
   naturalMeaning  String?
   literalMeaning  String?
   ttsText         String
-  difficulty      Int                 @default(1)
-  register        String              @default("colloquial")
+  difficulty      Int         @default(1)
+  register        String      @default("colloquial")
   formalNote      String?
   notes           String?
-  status          String              @default("draft")
+  status          String      @default("draft")
   audioAssetId    String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  concept         Concept?            @relation(fields: [conceptId], references: [id], onDelete: SetNull)
-  audioAsset      AudioAsset?         @relation(fields: [audioAssetId], references: [id])
-  vocabExamples   VocabularyExample[]
-}
-
-model VocabularyExample {
-  id           String         @id @default(cuid())
-  vocabularyId String
-  sentenceId   String
-  vocabulary   VocabularyItem @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
-  sentence     Sentence       @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-
-  @@unique([vocabularyId, sentenceId])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  concept         Concept?    @relation(fields: [conceptId], references: [id], onDelete: SetNull)
+  audioAsset      AudioAsset? @relation(fields: [audioAssetId], references: [id])
 }
 
 model Dialogue {

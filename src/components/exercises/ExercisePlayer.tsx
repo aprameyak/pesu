@@ -17,12 +17,10 @@ export type ExerciseData = {
   promptText?: string | null;
   ttsText?: string | null;
   correctAnswers: string;
-  distractors?: string | null;
   tokens?: string | null;
   options?: string | null;
   pairs?: string | null;
   explanation?: string | null;
-  hint?: string | null;
   literalMeaning?: string | null;
   formalNote?: string | null;
   conceptKeys: string;

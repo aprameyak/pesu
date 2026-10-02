@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { PhraseCard } from "@/components/learning/PhraseCard";
+import { submitReviewAnswer } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 
 type Item = {
@@ -18,6 +19,7 @@ export function ReviewClient({ items }: { items: Item[] }) {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [done, setDone] = useState(false);
+  const [pending, start] = useTransition();
 
   if (!items.length) {
     return <p className="mt-8 text-ink-muted">Nothing due — enjoy the win.</p>;
@@ -33,6 +35,17 @@ export function ReviewClient({ items }: { items: Item[] }) {
   }
 
   const item = items[i];
+
+  const advance = (remembered: boolean) => {
+    start(async () => {
+      await submitReviewAnswer({ conceptKey: item.conceptKey, remembered });
+      if (i + 1 >= items.length) setDone(true);
+      else {
+        setI((n) => n + 1);
+        setRevealed(false);
+      }
+    });
+  };
 
   return (
     <div className="mt-8">
@@ -56,42 +69,16 @@ export function ReviewClient({ items }: { items: Item[] }) {
           <button
             type="button"
             className={cn("btn-secondary")}
-            onClick={() => {
-              fetch("/api/analytics", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  event: "review_completed",
-                  payload: { conceptKey: item.conceptKey, remembered: false },
-                }),
-              });
-              if (i + 1 >= items.length) setDone(true);
-              else {
-                setI(i + 1);
-                setRevealed(false);
-              }
-            }}
+            disabled={pending}
+            onClick={() => advance(false)}
           >
             Again
           </button>
           <button
             type="button"
             className="btn-primary"
-            onClick={() => {
-              fetch("/api/analytics", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  event: "review_completed",
-                  payload: { conceptKey: item.conceptKey, remembered: true },
-                }),
-              });
-              if (i + 1 >= items.length) setDone(true);
-              else {
-                setI(i + 1);
-                setRevealed(false);
-              }
-            }}
+            disabled={pending}
+            onClick={() => advance(true)}
           >
             Got it
           </button>
