@@ -22,6 +22,7 @@ export function AudioButton({
   size = "md",
 }: AudioButtonProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [fetchedUrl, setFetchedUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -32,6 +33,7 @@ export function AudioButton({
   const ensureAudio = useCallback(async () => {
     if (url) return url;
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/audio", {
         method: "POST",
@@ -43,6 +45,10 @@ export function AudioButton({
         setFetchedUrl(data.publicUrl);
         return data.publicUrl as string;
       }
+      setError(data.error || "Audio unavailable. Set SARVAM_API_KEY or generate from Admin.");
+      return "";
+    } catch {
+      setError("Audio unavailable.");
       return "";
     } finally {
       setLoading(false);
@@ -104,6 +110,11 @@ export function AudioButton({
       >
         {speed === "slow" ? "Slow" : "1x"}
       </button>
+      {error && (
+        <span className="max-w-[12rem] text-[11px] text-ink-faint" role="status">
+          {error}
+        </span>
+      )}
     </div>
   );
 }
