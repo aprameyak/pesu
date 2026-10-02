@@ -1,20 +1,12 @@
-# Pesu — conversational Tamil, Romanized first
+# Pesu
 
-**Pesu** (பேசு — “speak”) teaches everyday spoken Tamil without requiring the Tamil alphabet first.
+Conversational Tamil, Romanized first. Pesu (பேசு) means “speak.”
 
-Hierarchy in every lesson:
-
-1. **Romanized Tamil** (primary)
-2. **English meaning**
-3. **Tamil script** (secondary / smaller)
-4. **Audio** via Sarvam AI Bulbul v3 (`ta-IN`), cached server-side
+Each phrase shows, in order: Romanized Tamil, English meaning, Tamil script (smaller), then audio from Sarvam Bulbul v3 (`ta-IN`), cached on the server.
 
 ## Stack
 
-- Next.js (App Router) + TypeScript + Tailwind CSS
-- Prisma + SQLite locally (swap `DATABASE_URL` for PostgreSQL in production)
-- NextAuth (credentials + guest)
-- Sarvam TTS behind `TamilSpeechService` (API key never shipped to the browser)
+Next.js, TypeScript, Tailwind, Prisma + SQLite, NextAuth (credentials + guest), Sarvam TTS via `TamilSpeechService`
 
 ## Quick start
 
@@ -26,20 +18,16 @@ npm run db:seed
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open http://localhost:3000
 
-### Local seed accounts
+### Seed accounts (local only)
 
-| Role   | Email           | Password        |
-|--------|-----------------|-----------------|
-| Admin  | admin@pesu.app  | pesu-admin-123  |
-| Learner| demo@pesu.app   | demo1234        |
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@pesu.app | pesu-admin-123 |
+| Learner | demo@pesu.app | demo1234 |
 
-Seed credentials only — not for production.
-
-### Sarvam audio
-
-Set in `.env`:
+### Sarvam
 
 ```
 SARVAM_API_KEY=your_key
@@ -48,23 +36,18 @@ SARVAM_TTS_SPEAKER=kavitha
 SARVAM_TTS_LANGUAGE=ta-IN
 ```
 
-Without a key, lessons still work; audio buttons stay pending until you generate from **Admin → Generate audio**.
+Without a key, lessons work; generate audio later from Admin. Audio is built once from Tamil script and stored under `storage/audio` and `public/audio/cache`. Slow/normal playback uses `playbackRate`.
 
-Audio is generated once from **Tamil script**, stored under `storage/audio` + `public/audio/cache`, and reused. Learners can play **Slow / Normal** via browser `playbackRate` (no duplicate TTS files).
+Password reset does not send email. In development the reset token is returned in the UI.
 
-Password reset does not send email yet; in development a reset token is returned to the client for local testing.
+## Features
 
-## What’s in the MVP
-
-- Auth: signup, login, logout, guest, password reset tokens
-- Onboarding + heritage placement
-- Course path with Unit 1 **Survival Tamil** (5 lessons, many exercise types)
-- Phrase UI: Romanized → English → script → speaker
-- Centralized romanization/normalization layer
-- Multi-dimension mastery + review queue
+- Auth (signup, login, guest, reset tokens)
+- Onboarding and heritage placement
+- Unit 1 Survival Tamil (5 lessons)
+- Romanization helpers, mastery, review queue
 - XP, streaks, daily goal, achievements
-- Admin curriculum overview, publish / needs-review, audio generate/regenerate
-- Analytics event hooks
+- Admin: publish, needs-review, audio generate/regenerate
 
 ## License
 
