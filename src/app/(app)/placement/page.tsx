@@ -38,7 +38,7 @@ export default function PlacementPage() {
       <main className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center px-5 py-10 text-center">
         <h1 className="font-display text-3xl font-semibold">Placement complete</h1>
         <p className="mt-3 text-ink-muted">
-          You got {score}/{QUESTIONS.length}. Your path is ready — jump into lessons that stretch you.
+          Score {score}/{QUESTIONS.length}. Continue to your dashboard.
         </p>
         <button className="btn-primary mt-8" onClick={() => router.push("/dashboard")}>
           Go to dashboard

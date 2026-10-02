@@ -17,7 +17,6 @@ model User {
   isGuest           Boolean  @default(false)
   onboardingDone    Boolean  @default(false)
   tamilLevel        String?
-  placementLessonId String?
   scriptVisibility  String   @default("smaller")
   xp                Int      @default(0)
   level             Int      @default(1)
