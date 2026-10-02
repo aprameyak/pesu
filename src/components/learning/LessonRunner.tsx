@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ExercisePlayer, type ExerciseData } from "@/components/exercises/ExercisePlayer";
 import { completeLesson, startLesson, submitExerciseAnswer } from "@/lib/actions";
@@ -19,7 +18,6 @@ type Props = {
 };
 
 export function LessonRunner({ lesson }: Props) {
-  const router = useRouter();
   const exercises = useMemo(
     () => [...lesson.exercises].sort((a, b) => (a as { order?: number }).order! - (b as { order?: number }).order!),
     [lesson.exercises]

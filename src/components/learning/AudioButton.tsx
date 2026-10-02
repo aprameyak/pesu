@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Volume2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,15 +22,12 @@ export function AudioButton({
   size = "md",
 }: AudioButtonProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [url, setUrl] = useState(initialUrl || "");
+  const [fetchedUrl, setFetchedUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<"normal" | "slow">("normal");
   const playCount = useRef(0);
-
-  useEffect(() => {
-    setUrl(initialUrl || "");
-  }, [initialUrl]);
+  const url = fetchedUrl || initialUrl || "";
 
   const ensureAudio = useCallback(async () => {
     if (url) return url;
@@ -43,7 +40,7 @@ export function AudioButton({
       });
       const data = await res.json();
       if (data.publicUrl) {
-        setUrl(data.publicUrl);
+        setFetchedUrl(data.publicUrl);
         return data.publicUrl as string;
       }
       return "";

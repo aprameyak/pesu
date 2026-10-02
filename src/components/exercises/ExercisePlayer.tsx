@@ -99,13 +99,11 @@ export function ExercisePlayer({ exercise, onAnswer }: Props) {
   const correctAnswers = parseJsonArray(exercise.correctAnswers);
   const options = useMemo(
     () => shuffle(parseJsonArray(exercise.options)),
-
-    [exercise.id]
+    [exercise.options]
   );
   const tokens = useMemo(
     () => shuffle(parseJsonArray(exercise.tokens)),
-
-    [exercise.id]
+    [exercise.tokens]
   );
   const pairs = useMemo(() => {
     try {
@@ -287,8 +285,6 @@ function BuildSentence({
   const undo = () => {
     if (answered || built.length === 0) return;
     const last = built[built.length - 1];
-    const idx = tokens.findIndex((t, i) => t === last && used[i]);
-
     let found = -1;
     for (let i = used.length - 1; i >= 0; i--) {
       if (used[i] && tokens[i] === last) {
