@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --mango: #e85d04;
+  --mango-deep: #c44900;
+  --ink: #1c1917;
+  --ink-muted: #57534e;
+  --ink-faint: #a8a29e;
+  --surface: #fffaf6;
+  --surface-2: #fff3ea;
+  --border: #e7ddd3;
+  --success: #0f766e;
+  --coral: #e11d48;
+  --teal: #0d9488;
+  --background: #fffaf6;
+  --foreground: #1c1917;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-mango: var(--mango);
+  --color-mango-deep: var(--mango-deep);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-coral: var(--coral);
+  --color-teal: var(--teal);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-tamil: var(--font-tamil);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+}
+
+.font-tamil {
+  font-family: var(--font-tamil), "Noto Sans Tamil", sans-serif;
+}
+
+.bg-atmosphere {
+  background:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(232, 93, 4, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(13, 148, 136, 0.1), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255, 180, 100, 0.08), transparent),
+    var(--surface);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  border-radius: 9999px;
+  background: var(--mango);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background: var(--mango-deep);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--ink);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--mango);
+  background: rgba(232, 93, 4, 0.04);
+}
+
+.input-field {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 1rem;
+  border: 1.5px solid var(--border);
+  background: white;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.input-field:focus {
+  outline: 2px solid rgba(232, 93, 4, 0.35);
+  border-color: var(--mango);
 }

@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pesu — conversational Tamil, Romanized first
 
-## Getting Started
+**Pesu** (பேசு — “speak”) teaches everyday spoken Tamil without requiring the Tamil alphabet first.
 
-First, run the development server:
+Hierarchy in every lesson:
+
+1. **Romanized Tamil** (primary)
+2. **English meaning**
+3. **Tamil script** (secondary / smaller)
+4. **Audio** via Sarvam AI Bulbul v3 (`ta-IN`), cached server-side
+
+## Stack
+
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- Prisma + SQLite locally (swap `DATABASE_URL` for PostgreSQL in production)
+- NextAuth (credentials + guest; OAuth-ready Account model)
+- Sarvam TTS behind `TamilSpeechService` (API key never shipped to the browser)
+
+## Quick start
 
 ```bash
+cd pesu
+cp .env.example .env
+npm install
+npm run db:push
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo accounts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Role   | Email           | Password        |
+|--------|-----------------|-----------------|
+| Admin  | admin@pesu.app  | pesu-admin-123  |
+| Learner| demo@pesu.app   | demo1234        |
 
-## Learn More
+### Sarvam audio
 
-To learn more about Next.js, take a look at the following resources:
+Set in `.env`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+SARVAM_API_KEY=your_key
+SARVAM_TTS_MODEL=bulbul:v3
+SARVAM_TTS_SPEAKER=kavitha
+SARVAM_TTS_LANGUAGE=ta-IN
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Without a key, lessons still work; audio buttons stay pending until you generate from **Admin → Generate audio**.
 
-## Deploy on Vercel
+Audio is generated once from **Tamil script**, stored under `storage/audio` + `public/audio/cache`, and reused. Learners can play **Slow / Normal** via browser `playbackRate` (no duplicate TTS files).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## What’s in the MVP
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Auth: signup, login, logout, guest, password reset tokens
+- Onboarding + heritage placement
+- Course path with Unit 1 **Survival Tamil** (5 polished lessons, many exercise types)
+- Phrase UI: Romanized → English → script → speaker
+- Centralized romanization/normalization layer
+- Multi-dimension mastery + review queue
+- XP, streaks, daily goal, achievements
+- Admin curriculum overview, publish / needs-review, audio generate/regenerate
+- Analytics event hooks
+
+Units 2–10 are scaffolded as path placeholders for content expansion.
+
+## Product rule
+
+Never turn this into “learn to read Tamil.” Script is passive exposure. Success looks like answering **Saaptiya?** with **Innum illa.**

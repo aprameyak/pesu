@@ -30,8 +30,11 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +42,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local data
+/prisma/dev.db
+/prisma/dev.db-journal
+/storage/audio/*
+!/storage/audio/.gitkeep
+/public/audio/cache/*
+!/public/audio/cache/.gitkeep
