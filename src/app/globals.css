@@ -60,11 +60,7 @@ body {
 }
 
 .bg-atmosphere {
-  background:
-    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(232, 93, 4, 0.12), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(13, 148, 136, 0.1), transparent),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(255, 180, 100, 0.08), transparent),
-    var(--surface);
+  background: var(--surface);
 }
 
 .btn-primary {
